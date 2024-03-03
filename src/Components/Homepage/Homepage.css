@@ -1,0 +1,36 @@
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  width: 40%;
+  justify-content: center;
+  margin: auto;
+  margin-top: 5rem;
+}
+
+.case_code,
+.client_name,
+.client_contact,
+.tutor_name,
+.tutor_contact,
+.first_lesson_data_time,
+.frequency,
+.duration,
+.rate,
+.commission {
+  display: flex;
+  justify-content: space-between;
+}
+
+.button {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+}
+
+.convert-output {
+  display: flex;
+  justify-content: space-evenly;
+}
+
+

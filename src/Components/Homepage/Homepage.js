@@ -10,6 +10,8 @@ const Homepage = () => {
     tutor_name: "",
     tutor_contact: "",
     first_lesson_data_time: "",
+    frequency: "",
+    duration: "",
     rate: "",
     commission: "",
   };
@@ -27,7 +29,6 @@ const Homepage = () => {
   };
 
   const fetchCase = async (caseCode) => {
-    console.log("hi");
     const url = "https://admin.premiumtutors.sg/api/assignments";
     const response = await axios.get(url);
 
@@ -53,19 +54,37 @@ const Homepage = () => {
     const tutorContact = formData["tutor_contact"];
     const firstLesson = formData["first_lesson_data_time"];
     const rate = formData["rate"];
+    const frequency = formData["frequency"];
+    const duration = formData["duration"];
+    let commission = formData["commission"];
 
     const assignment = await fetchCase(caseCode);
-    console.log(assignment);
     const assignmentContent = assignment.content;
-    const assignmentCommission = assignment.commission;
-    const assignmentDuration = assignment.duration;
+    const assignmentLevel = assignmentContent
+      .split("\n")[0]
+      .split("@")[0]
+      .split("(")[0];
+    if (!commission) {
+      commission = assignment.commission.replace(/[a-zA-Z]/g, "").trim();
+    }
+    console.log(rate);
+    console.log(parseFloat(duration.replace(/[a-zA-Z]/g, "").trim()));
+    console.log(parseFloat(rate.replace(/[a-zA-Z]/g, "").trim()));
+    let commissionAmount =
+      parseFloat(commission) *
+      parseFloat(duration.replace(/[a-zA-Z]/g, "").trim()) *
+      parseFloat(rate.replace(/[a-zA-Z]/g, "").trim());
     const assignmentLocation = assignment.location;
 
     let confirmationMessage = "";
-    confirmationMessage = `Lessons are confirmed to start on ${firstLesson} with ${clientName}. If there are no issues, lessons will be ${assignmentDuration}. The rate will be ${rate}\n\nAn invoice, which will include both contact and payment details, will be issued to you within the next 1-2 days.\n\nShould you find it necessary to discontinue the lessons earlier than the quantity specified on the invoice, please note that you are only obliged to pay for the lessons that have been provided up to that point. Payment is requested upon the completion of the lessons. Please remit payments for subsequent lessons directly to the tutor only after settling the invoice amount with our company.\n\nRest assured, there are no hidden or additional fees. Your financial obligation is limited to the cost of the lessons delivered and any expenses for materials procured by the tutor, should they arise.\n\nWe thank you for your engagement and are here to support a seamless educational experience.`;
+    confirmationMessage = `Lessons are confirmed to start on ${firstLesson} with ${clientName}. If there are no issues, lessons will be ${frequency}, ${duration} per lesson. The rate will be ${rate}.\n\nAn invoice, which will include both contact and payment details, will be issued to you within the next 1-2 days.\n\nShould you find it necessary to discontinue the lessons earlier than the quantity specified on the invoice, please note that you are only obliged to pay for the lessons that have been provided up to that point. Payment is requested upon the completion of the lessons. Please remit payments for subsequent lessons directly to the tutor only after settling the invoice amount with our company.\n\nRest assured, there are no hidden or additional fees. Your financial obligation is limited to the cost of the lessons delivered and any expenses for materials procured by the tutor, should they arise.\n\nWe thank you for your engagement and are here to support a seamless educational experience.`;
 
     // First text area
     setTextOutput1(confirmationMessage);
+
+    let invoiceMessage = "";
+    invoiceMessage = `Level/Subject: ${assignmentLevel}\nTutor Name: ${tutorName} (HP: ${tutorContact})\nClient Name: ${clientName} (HP: ${clientContact})\n\nTuition Location: ${assignmentLocation}\nFirst Lesson: ${firstLesson}\nRate: ${rate}\nIf there are no issues, lessons will be ${frequency}, ${duration} per lesson. The rate will be ${rate}.\n\nCommission: Fees for the first ${commission} lessons will be collected by our Company, amounting ${commissionAmount}`;
+    setTextOutput2(invoiceMessage);
   };
 
   const handleReset = () => {
@@ -80,7 +99,7 @@ const Homepage = () => {
       <div className="form-input">
         <form action="" onSubmit={handleSubmit}>
           <div className="case_code">
-            <label htmlFor="case_code">Case Code</label>
+            <label htmlFor="case_code">Case Code*</label>
             <input
               type="text"
               id="case_code"
@@ -91,7 +110,7 @@ const Homepage = () => {
             />
           </div>
           <div className="client_name">
-            <label htmlFor="client_name">Client Name</label>
+            <label htmlFor="client_name">Client Name*</label>
             <input
               type="text"
               id="client_name"
@@ -102,7 +121,7 @@ const Homepage = () => {
             />
           </div>
           <div className="client_contact">
-            <label htmlFor="client_contact">Client Contact</label>
+            <label htmlFor="client_contact">Client Contact*</label>
             <input
               type="text"
               id="client_contact"
@@ -147,6 +166,28 @@ const Homepage = () => {
               placeholder="91234567"
             />
           </div>
+          <div className="frequency">
+            <label htmlFor="frequency">Frequency of lesson</label>
+            <input
+              type="text"
+              id="frequency"
+              name="frequency"
+              value={formData.frequency}
+              onChange={handleInputChange}
+              placeholder="once a week"
+            />
+          </div>
+          <div className="duration">
+            <label htmlFor="duration">Duration per lesson</label>
+            <input
+              type="text"
+              id="duration"
+              name="duration"
+              value={formData.duration}
+              onChange={handleInputChange}
+              placeholder="1.5 hour"
+            />
+          </div>
           <div className="rate">
             <label htmlFor="rate">Rate</label>
             <input
@@ -156,6 +197,17 @@ const Homepage = () => {
               value={formData.rate}
               onChange={handleInputChange}
               placeholder="91234567"
+            />
+          </div>
+          <div className="commission">
+            <label htmlFor="commission">Commission</label>
+            <input
+              type="text"
+              id="commission"
+              name="commission"
+              value={formData.commission}
+              onChange={handleInputChange}
+              placeholder="2"
             />
           </div>
           <div className="button">
@@ -179,7 +231,7 @@ const Homepage = () => {
           <textarea
             name=""
             id=""
-            cols="50"
+            cols="70"
             rows="30"
             value={textOutput1}
             onChange={(e) => setTextOutput1(e.target.value)}
@@ -191,7 +243,7 @@ const Homepage = () => {
           <textarea
             name=""
             id=""
-            cols="50"
+            cols="70"
             rows="30"
             value={textOutput2}
             onChange={(e) => setTextOutput2(e.target.value)}
