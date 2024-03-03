@@ -31,10 +31,10 @@ const Homepage = () => {
     const url = "https://admin.premiumtutors.sg/api/assignments";
     const response = await axios.get(url);
 
-    if (response.status == 200) {
+    if (response.status === 200) {
       const data = response.data;
       for (let i = 0; i < data.assignments.length; i++) {
-        if (caseCode == data.assignments[i].code) {
+        if (caseCode === data.assignments[i].code) {
           return data.assignments[i];
         }
       }
@@ -52,12 +52,20 @@ const Homepage = () => {
     const tutorName = formData["tutor_name"];
     const tutorContact = formData["tutor_contact"];
     const firstLesson = formData["first_lesson_data_time"];
+    const rate = formData["rate"];
 
     const assignment = await fetchCase(caseCode);
+    console.log(assignment);
     const assignmentContent = assignment.content;
     const assignmentCommission = assignment.commission;
     const assignmentDuration = assignment.duration;
     const assignmentLocation = assignment.location;
+
+    let confirmationMessage = "";
+    confirmationMessage = `Lessons are confirmed to start on ${firstLesson} with ${clientName}. If there are no issues, lessons will be ${assignmentDuration}. The rate will be ${rate}\n\nAn invoice, which will include both contact and payment details, will be issued to you within the next 1-2 days.\n\nShould you find it necessary to discontinue the lessons earlier than the quantity specified on the invoice, please note that you are only obliged to pay for the lessons that have been provided up to that point. Payment is requested upon the completion of the lessons. Please remit payments for subsequent lessons directly to the tutor only after settling the invoice amount with our company.\n\nRest assured, there are no hidden or additional fees. Your financial obligation is limited to the cost of the lessons delivered and any expenses for materials procured by the tutor, should they arise.\n\nWe thank you for your engagement and are here to support a seamless educational experience.`;
+
+    // First text area
+    setTextOutput1(confirmationMessage);
   };
 
   const handleReset = () => {
@@ -135,6 +143,17 @@ const Homepage = () => {
               id="first_lesson_data_time"
               name="first_lesson_data_time"
               value={formData.first_lesson_data_time}
+              onChange={handleInputChange}
+              placeholder="91234567"
+            />
+          </div>
+          <div className="rate">
+            <label htmlFor="rate">Rate</label>
+            <input
+              type="text"
+              id="rate"
+              name="rate"
+              value={formData.rate}
               onChange={handleInputChange}
               placeholder="91234567"
             />
