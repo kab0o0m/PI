@@ -29,21 +29,27 @@ const Homepage = () => {
   };
 
   const fetchCase = async (caseCode) => {
-    for (let i = 0; i < 10; i++) {
-      let url = `https://admin.premiumtutors.sg/api/assignments?pageNo=${i}&showAll=yes&pageSize=100`;
-      const response = await axios.get(url);
+    console.log("fetching");
+    try {
+      for (let i = 0; i < 10; i++) {
+        let url = `https://admin.premiumtutors.sg/api/assignments?pageNo=${i}&showAll=yes&pageSize=100`;
+        const response = await axios.get(url);
 
-      if (response.status === 200) {
-        const data = response.data;
+        if (response.status === 200) {
+          const data = response.data;
 
-        for (let j = 0; j < data.data.length; j++) {
-          if (caseCode === data.data[j].code) {
-            return data.data[j];
+          for (let j = 0; j < data.data.length; j++) {
+            if (caseCode === data.data[j].code) {
+              return data.data[j];
+            }
           }
         }
       }
+    } catch (error) {
+      console.log(error);
+      alert("No assignment found");
+      return;
     }
-    alert("No assignment found");
   };
 
   const handleSubmit = async (e) => {
@@ -84,13 +90,13 @@ const Homepage = () => {
       parseFloat(rate.replace(/[a-zA-Z]/g, "").trim());
 
     let confirmationMessage = "";
-    confirmationMessage = `Lessons are confirmed to start on ${firstLesson} with ${clientName}. If there are no issues, lessons will be ${frequency}, ${duration} per lesson. The rate will be ${rate}.\n\nAn invoice, which will include both contact and payment details, will be issued to you within the next 1-2 days.\n\nShould you find it necessary to discontinue the lessons earlier than the quantity specified on the invoice, please note that you are only obliged to pay for the lessons that have been provided up to that point. Payment is requested upon the completion of the lessons. Please remit payments for subsequent lessons directly to the tutor only after settling the invoice amount with our company.\n\nRest assured, there are no hidden or additional fees. Your financial obligation is limited to the cost of the lessons delivered and any expenses for materials procured by the tutor, should they arise.\n\nWe thank you for your engagement and are here to support a seamless educational experience.`;
+    confirmationMessage = `Confirmed Lesson Details are as follows:\n\nDate & Time: ${firstLesson}\nTutor Name: ${tutorName}\nFrequency & duration of lessons: $ An invoice, which will include both contact and payment details, will be issued to you within the next 1-2 days.\n\nShould you find it necessary to discontinue the lessons earlier than the quantity specified on the invoice, please note that you are only obliged to pay for the lessons that have been provided up to that point. Payment is requested upon the completion of the lessons. Please remit payments for subsequent lessons directly to the tutor only after settling the invoice amount with our company.\n\nRest assured, there are no hidden or additional fees. Your financial obligation is limited to the cost of the lessons delivered and any expenses for materials procured by the tutor, should they arise.\n\nWe thank you for your engagement and are here to support a seamless educational experience.`;
 
     // First text area
     setTextOutput1(confirmationMessage);
 
     let invoiceMessage = "";
-    invoiceMessage = `${assignmentLevel}\n\nTutor Name: ${tutorName} (HP: ${tutorContact})\nClient Name: ${clientName} (HP: ${clientContact})\n\nTuition Location: ${assignmentLocation}\nFirst Lesson: ${firstLesson}\nRate: ${rate}\nIf there are no issues, lessons will be ${frequency}, ${duration} per lesson. The rate will be ${rate}.\n\nCommission: Fees for the first ${commission} lessons will be collected by our Company, amounting ${commissionAmount}`;
+    invoiceMessage = `${caseCode} ${tutorContact}\n\n${assignmentLevel}\n\nTutor Name: ${tutorName} (HP: ${tutorContact})\nClient Name: ${clientName} (HP: ${clientContact})\n\nTuition Location: ${assignmentLocation}\nFirst Lesson: ${firstLesson}\nRate: ${rate}\nIf there are no issues, lessons will be ${frequency}, ${duration} per lesson. The rate will be ${rate}.\n\nCommission: Fees for the first ${commission} lessons will be collected by our Company, amounting ${commissionAmount}`;
     setTextOutput2(invoiceMessage);
   };
 
