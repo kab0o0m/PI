@@ -72,8 +72,9 @@ const Homepage = () => {
     let assignmentFeesPerLesson = "";
     let totalCommissionFees = "";
 
+    //Fetch assignment using assignment code from backend
     const assignment = await fetchCase(caseCode);
-    console.log(assignment);
+
     if (assignment) {
       assignmentContent = assignment.content;
       assignmentLevel = assignmentContent
@@ -103,6 +104,8 @@ const Homepage = () => {
         rate;
 
       totalCommissionFees = assignmentFeesPerLesson * commission;
+    } else {
+      alert("Unable to find assignment!");
     }
 
     let confirmationMessage = "";
