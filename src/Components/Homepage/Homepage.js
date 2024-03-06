@@ -13,6 +13,7 @@ const Homepage = () => {
     rate: "",
     frequencyDuration: "",
     commission: "",
+    commissionPerHour: "",
   };
 
   const [formData, setFormData] = useState(initialFormData);
@@ -39,7 +40,6 @@ const Homepage = () => {
   };
 
   const fetchCase = async (caseCode) => {
-    console.log("fetching");
     try {
       const assignmentResponses = {}; // Initialize an empty hashmap
       let pageNo = 0;
@@ -89,6 +89,7 @@ const Homepage = () => {
     const rate = formData["rate"].trim();
     let frequencyDuration = formData["frequencyDuration"].trim();
     let commission = formData["commission"].trim();
+    let commissionPerHour = formData["commissionPerHour"];
 
     let assignmentContent = "";
     let assignmentLevel = "";
@@ -138,16 +139,18 @@ const Homepage = () => {
     //Handle fees calculation when /hour or /45mins
     if (assignmentDurationType.includes("hour")) {
       assignmentFeesPerLesson =
-        assignmentFrequency *
-        assignmentDuration.replace(/[^0-9.]/g, "").trim() *
-        rate;
+        assignmentDuration.replace(/[^0-9.]/g, "").trim() * rate;
     } else if (assignmentDurationType.includes("mins")) {
-      assignmentFeesPerLesson = assignmentFrequency * rate;
+      assignmentFeesPerLesson = rate;
     } else {
       assignmentFeesPerLesson = "";
     }
 
-    totalCommissionFees = assignmentFeesPerLesson * commission;
+    if (!commissionPerHour) {
+      totalCommissionFees = assignmentFeesPerLesson * commission;
+    } else {
+      totalCommissionFees = rate * commissionPerHour;
+    }
 
     let confirmationMessage = "";
     confirmationMessage = `Confirmed Lesson Details are as follows:\n\nDate & Time: ${firstLesson}\nTutor Name: ${tutorName}\nFrequency & duration of lessons: ${assignmentFrequencyDuration}\nRate: $${rate}/${assignmentDurationType}\nFee for 1 lesson: $${assignmentFeesPerLesson}/lesson\n\nAn invoice, which will include both contact and payment details, will be issued to you within the next 1-2 days.\n\nShould you find it necessary to discontinue the lessons earlier than the quantity specified on the invoice, please note that you are only obliged to pay for the lessons that have been provided up to that point. Payment is requested upon the completion of the lessons. Please remit payments for subsequent lessons directly to the tutor only after settling the invoice amount with our company.\n\nRest assured, there are no hidden or additional fees. Your financial obligation is limited to the cost of the lessons delivered and any expenses for materials procured by the tutor, should they arise.\n\nWe thank you for your engagement and are here to support a seamless educational experience.`;
@@ -156,7 +159,11 @@ const Homepage = () => {
     setTextOutput1(confirmationMessage);
 
     let invoiceMessage = "";
-    invoiceMessage = `${caseCode} ${tutorContact}\n\n${assignmentLevel}\n\nTutor Name: ${tutorName} (HP: ${tutorContact})\nClient Name: ${clientName} (HP: ${clientContact})\n\nTuition Location: ${assignmentLocation}\nFirst Lesson: ${firstLesson}\nRate: $${rate}/${assignmentDurationType}\nIf there are no issues, lessons will be ${assignmentFrequencyDuration}. The rate will be $${rate}/${assignmentDurationType}, $${assignmentFeesPerLesson}/lesson.\n\nCommission: Fees for the first ${commission} lessons will be collected by our Company, amounting $${totalCommissionFees}`;
+    let additionalMessage = "";
+    if (commissionPerHour) {
+      additionalMessage = `(${commissionPerHour} hours) `;
+    }
+    invoiceMessage = `${caseCode} ${tutorContact}\n\n${assignmentLevel}\n\nTutor Name: ${tutorName} (HP: ${tutorContact})\nClient Name: ${clientName} (HP: ${clientContact})\n\nTuition Location: ${assignmentLocation}\nFirst Lesson: ${firstLesson}\nRate: $${rate}/${assignmentDurationType}\nIf there are no issues, lessons will be ${assignmentFrequencyDuration}. The rate will be $${rate}/${assignmentDurationType}, $${assignmentFeesPerLesson}/lesson.\n\nCommission: Fees for the first ${commission} lessons ${additionalMessage}will be collected by our Company, amounting $${totalCommissionFees}`;
     setTextOutput2(invoiceMessage);
   };
 
@@ -271,12 +278,25 @@ const Homepage = () => {
             />
           </div>
           <div className="commission">
-            <label htmlFor="commission">Commission (Optional) "2"</label>
+            <label htmlFor="commission">Commission by lesson (Optional)</label>
             <input
               type="text"
               id="commission"
               name="commission"
               value={formData.commission}
+              onChange={handleInputChange}
+              placeholder="2"
+            />
+          </div>
+          <div className="commission-per-hour">
+            <label htmlFor="commissionPerHour">
+              Commission per hour (Optional)
+            </label>
+            <input
+              type="text"
+              id="commissionPerHour"
+              name="commissionPerHour"
+              value={formData.commissionPerHour}
               onChange={handleInputChange}
               placeholder="2"
             />
