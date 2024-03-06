@@ -23,8 +23,7 @@ form input[type='text'] {
 .tutor_name,
 .tutor_contact,
 .first_lesson_data_time,
-.frequency,
-.duration,
+.frequency-duration,
 .rate,
 .commission {
   display: flex;

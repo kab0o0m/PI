@@ -12,6 +12,7 @@ const Homepage = () => {
     first_lesson_data_time: "",
     rate: "",
     commission: "",
+    frequencyDuration: "",
   };
 
   const [formData, setFormData] = useState(initialFormData);
@@ -29,19 +30,30 @@ const Homepage = () => {
   const fetchCase = async (caseCode) => {
     console.log("fetching");
     try {
-      for (let i = 0; i < 10; i++) {
-        let url = `https://admin.premiumtutors.sg/api/assignments?pageNo=${i}&showAll=yes&pageSize=100`;
+      const assignmentResponses = {}; // Initialize an empty hashmap
+      let pageNo = 0;
+      let hasMorePages = true;
+
+      while (hasMorePages) {
+        let url = `https://admin.premiumtutors.sg/api/assignments?pageNo=${pageNo}&showAll=yes&pageSize=100`;
         const response = await axios.get(url);
+        const assignments = response.data.data; // Store the response in the hashmap
+        // Check if there are more pages by examining the response data
 
-        if (response.status === 200) {
-          const data = response.data;
-
-          for (let j = 0; j < data.data.length; j++) {
-            if (caseCode === data.data[j].code) {
-              return data.data[j];
-            }
-          }
+        for (const assignment of assignments) {
+          const code = assignment.code;
+          assignmentResponses[code] = assignment;
         }
+
+        if (response.data.data.length < 1) {
+          hasMorePages = false;
+        } // Assuming the response data contains an array of assignments
+
+        pageNo++; // Move to the next page
+      }
+
+      if (assignmentResponses[caseCode]) {
+        return assignmentResponses[caseCode];
       }
     } catch (error) {
       console.log(error);
@@ -90,18 +102,26 @@ const Homepage = () => {
       // Handle frequency, duration and duration type
       assignmentFrequencyDuration = assignment.duration;
       assignmentFrequency = assignmentFrequencyDuration.split("x")[0];
-      assignmentDuration = assignmentFrequencyDuration.split("x")[1];
-      assignmentDurationType = assignmentFrequencyDuration.includes("hour")
-        ? "hour"
-        : "".includes("min")
-        ? "min"
-        : "";
+      assignmentDuration = assignmentFrequencyDuration
+        .split("x")[1]
+        .replace(/\s/g, "");
+      if (assignmentDuration.includes("hour")) {
+        assignmentDurationType = "hour";
+      } else if (assignmentDuration.includes("mins")) {
+        assignmentDurationType = assignmentDuration.match(/\d+mins/)[0];
+      }
 
-      //Handle fees calculation
-      assignmentFeesPerLesson =
-        assignmentFrequency *
-        assignmentDuration.replace(/[^0-9.]/g, "").trim() *
-        rate;
+      //Handle fees calculation when /hour or /45mins
+      if (assignmentDurationType.includes("hour")) {
+        assignmentFeesPerLesson =
+          assignmentFrequency *
+          assignmentDuration.replace(/[^0-9.]/g, "").trim() *
+          rate;
+      } else if (assignmentDurationType.includes("mins")) {
+        assignmentFeesPerLesson = assignmentFrequency * rate;
+      } else {
+        assignmentFeesPerLesson = "";
+      }
 
       totalCommissionFees = assignmentFeesPerLesson * commission;
     } else {
@@ -209,8 +229,21 @@ const Homepage = () => {
               placeholder="$50/hour, $75/lesson"
             />
           </div>
+          <div className="frequency-duration">
+            <label htmlFor="frequencyDuration">
+              Frequency & Duration (Optional)
+            </label>
+            <input
+              type="text"
+              id="frequencyDuration"
+              name="frequencyDuration"
+              value={formData.frequencyDuration}
+              onChange={handleInputChange}
+              placeholder="2"
+            />
+          </div>
           <div className="commission">
-            <label htmlFor="commission">Commission</label>
+            <label htmlFor="commission">Commission (Optional)</label>
             <input
               type="text"
               id="commission"
