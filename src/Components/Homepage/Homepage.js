@@ -260,7 +260,7 @@ const Homepage = () => {
               name="rate"
               value={formData.rate}
               onChange={handleInputChange}
-              placeholder="$50/hour, $75/lesson"
+              placeholder="50"
               required
             />
           </div>
