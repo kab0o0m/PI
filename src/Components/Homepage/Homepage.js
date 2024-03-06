@@ -10,8 +10,6 @@ const Homepage = () => {
     tutor_name: "",
     tutor_contact: "",
     first_lesson_data_time: "",
-    frequency: "",
-    duration: "",
     rate: "",
     commission: "",
   };
@@ -62,13 +60,17 @@ const Homepage = () => {
     const tutorContact = formData["tutor_contact"].trim();
     const firstLesson = formData["first_lesson_data_time"].trim();
     const rate = formData["rate"].trim();
-    const frequency = formData["frequency"].trim();
-    const duration = formData["duration"].trim();
     let commission = formData["commission"].trim();
 
     let assignmentContent = "";
     let assignmentLevel = "";
     let assignmentLocation = "";
+    let assignmentFrequencyDuration = "";
+    let assignmentFrequency = "";
+    let assignmentDuration = "";
+    let assignmentDurationType = "";
+    let assignmentFeesPerLesson = "";
+    let totalCommissionFees = "";
 
     const assignment = await fetchCase(caseCode);
     console.log(assignment);
@@ -78,25 +80,39 @@ const Homepage = () => {
         .split("\n")[0]
         .split("@")[0]
         .split("(")[0];
+
       assignmentLocation = assignment.location;
       if (!commission) {
         commission = assignment.commission.replace(/[a-zA-Z]/g, "").trim();
       }
+
+      // Handle frequency, duration and duration type
+      assignmentFrequencyDuration = assignment.duration;
+      assignmentFrequency = assignmentFrequencyDuration.split("x")[0];
+      assignmentDuration = assignmentFrequencyDuration.split("x")[1];
+      assignmentDurationType = assignmentFrequencyDuration.includes("hour")
+        ? "hour"
+        : "".includes("min")
+        ? "min"
+        : "";
+
+      //Handle fees calculation
+      assignmentFeesPerLesson =
+        assignmentFrequency *
+        assignmentDuration.replace(/[^0-9.]/g, "").trim() *
+        rate;
+
+      totalCommissionFees = assignmentFeesPerLesson * commission;
     }
 
-    let commissionAmount =
-      parseFloat(commission) *
-      parseFloat(duration.replace(/[a-zA-Z]/g, "").trim()) *
-      parseFloat(rate.replace(/[a-zA-Z]/g, "").trim());
-
     let confirmationMessage = "";
-    confirmationMessage = `Confirmed Lesson Details are as follows:\n\nDate & Time: ${firstLesson}\nTutor Name: ${tutorName}\nFrequency & duration of lessons: $ An invoice, which will include both contact and payment details, will be issued to you within the next 1-2 days.\n\nShould you find it necessary to discontinue the lessons earlier than the quantity specified on the invoice, please note that you are only obliged to pay for the lessons that have been provided up to that point. Payment is requested upon the completion of the lessons. Please remit payments for subsequent lessons directly to the tutor only after settling the invoice amount with our company.\n\nRest assured, there are no hidden or additional fees. Your financial obligation is limited to the cost of the lessons delivered and any expenses for materials procured by the tutor, should they arise.\n\nWe thank you for your engagement and are here to support a seamless educational experience.`;
+    confirmationMessage = `Confirmed Lesson Details are as follows:\n\nDate & Time: ${firstLesson}\nTutor Name: ${tutorName}\nFrequency & duration of lessons: ${assignmentFrequencyDuration}\nRate: $${rate}/${assignmentDurationType}\nFee for 1 lesson: $${assignmentFeesPerLesson}/lesson\n\nAn invoice, which will include both contact and payment details, will be issued to you within the next 1-2 days.\n\nShould you find it necessary to discontinue the lessons earlier than the quantity specified on the invoice, please note that you are only obliged to pay for the lessons that have been provided up to that point. Payment is requested upon the completion of the lessons. Please remit payments for subsequent lessons directly to the tutor only after settling the invoice amount with our company.\n\nRest assured, there are no hidden or additional fees. Your financial obligation is limited to the cost of the lessons delivered and any expenses for materials procured by the tutor, should they arise.\n\nWe thank you for your engagement and are here to support a seamless educational experience.`;
 
     // First text area
     setTextOutput1(confirmationMessage);
 
     let invoiceMessage = "";
-    invoiceMessage = `${caseCode} ${tutorContact}\n\n${assignmentLevel}\n\nTutor Name: ${tutorName} (HP: ${tutorContact})\nClient Name: ${clientName} (HP: ${clientContact})\n\nTuition Location: ${assignmentLocation}\nFirst Lesson: ${firstLesson}\nRate: ${rate}\nIf there are no issues, lessons will be ${frequency}, ${duration} per lesson. The rate will be ${rate}.\n\nCommission: Fees for the first ${commission} lessons will be collected by our Company, amounting ${commissionAmount}`;
+    invoiceMessage = `${caseCode} ${tutorContact}\n\n${assignmentLevel}\n\nTutor Name: ${tutorName} (HP: ${tutorContact})\nClient Name: ${clientName} (HP: ${clientContact})\n\nTuition Location: ${assignmentLocation}\nFirst Lesson: ${firstLesson}\nRate: $${rate}/${assignmentDurationType}\nIf there are no issues, lessons will be ${assignmentFrequencyDuration}. The rate will be $${rate}/${assignmentDurationType}, $${assignmentFeesPerLesson}/lesson.\n\nCommission: Fees for the first ${commission} lessons will be collected by our Company, amounting $${totalCommissionFees}`;
     setTextOutput2(invoiceMessage);
   };
 
@@ -177,28 +193,6 @@ const Homepage = () => {
               value={formData.first_lesson_data_time}
               onChange={handleInputChange}
               placeholder="Friday, 8th March, 7.15pm"
-            />
-          </div>
-          <div className="frequency">
-            <label htmlFor="frequency">Frequency of lesson</label>
-            <input
-              type="text"
-              id="frequency"
-              name="frequency"
-              value={formData.frequency}
-              onChange={handleInputChange}
-              placeholder="once a week"
-            />
-          </div>
-          <div className="duration">
-            <label htmlFor="duration">Duration per lesson</label>
-            <input
-              type="text"
-              id="duration"
-              name="duration"
-              value={formData.duration}
-              onChange={handleInputChange}
-              placeholder="1.5 hour"
             />
           </div>
           <div className="rate">
