@@ -11,13 +11,24 @@ const Homepage = () => {
     tutor_contact: "",
     first_lesson_data_time: "",
     rate: "",
-    commission: "",
     frequencyDuration: "",
+    commission: "",
   };
 
   const [formData, setFormData] = useState(initialFormData);
   const [textOutput1, setTextOutput1] = useState(" ");
   const [textOutput2, setTextOutput2] = useState(" ");
+  const [isCopy1, setIsCopy1] = useState(false);
+  const [isCopy2, setIsCopy2] = useState(false);
+
+  const copyToClipboard = async (text) => {
+    try {
+      await navigator.clipboard.writeText(text);
+      console.log("Text successfully copied to clipboard");
+    } catch (err) {
+      console.error("Unable to copy text to clipboard", err);
+    }
+  };
 
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -64,6 +75,8 @@ const Homepage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsCopy1(false);
+    setIsCopy2(false);
 
     const caseCode = formData["case_code"].trim();
     const clientName = formData["client_name"].trim();
@@ -72,6 +85,7 @@ const Homepage = () => {
     const tutorContact = formData["tutor_contact"].trim();
     const firstLesson = formData["first_lesson_data_time"].trim();
     const rate = formData["rate"].trim();
+    let frequencyDuration = formData["frequencyDuration"].trim();
     let commission = formData["commission"].trim();
 
     let assignmentContent = "";
@@ -98,35 +112,40 @@ const Homepage = () => {
       if (!commission) {
         commission = assignment.commission.replace(/[a-zA-Z]/g, "").trim();
       }
-
-      // Handle frequency, duration and duration type
-      assignmentFrequencyDuration = assignment.duration;
-      assignmentFrequency = assignmentFrequencyDuration.split("x")[0];
-      assignmentDuration = assignmentFrequencyDuration
-        .split("x")[1]
-        .replace(/\s/g, "");
-      if (assignmentDuration.includes("hour")) {
-        assignmentDurationType = "hour";
-      } else if (assignmentDuration.includes("mins")) {
-        assignmentDurationType = assignmentDuration.match(/\d+mins/)[0];
-      }
-
-      //Handle fees calculation when /hour or /45mins
-      if (assignmentDurationType.includes("hour")) {
-        assignmentFeesPerLesson =
-          assignmentFrequency *
-          assignmentDuration.replace(/[^0-9.]/g, "").trim() *
-          rate;
-      } else if (assignmentDurationType.includes("mins")) {
-        assignmentFeesPerLesson = assignmentFrequency * rate;
-      } else {
-        assignmentFeesPerLesson = "";
-      }
-
-      totalCommissionFees = assignmentFeesPerLesson * commission;
     } else {
       alert("Unable to find assignment!");
     }
+
+    // Handle frequency, duration and duration type
+    if (frequencyDuration) {
+      assignmentFrequencyDuration = frequencyDuration;
+    } else {
+      assignmentFrequencyDuration = assignment.duration;
+    }
+    assignmentFrequency = assignmentFrequencyDuration.split("x")[0];
+    assignmentDuration = assignmentFrequencyDuration
+      .split("x")[1]
+      .replace(/\/week.*/, "/week")
+      .replace(/\s/g, "");
+    if (assignmentDuration.includes("hour")) {
+      assignmentDurationType = "hour";
+    } else if (assignmentDuration.includes("mins")) {
+      assignmentDurationType = assignmentDuration.match(/\d+mins/)[0];
+    }
+
+    //Handle fees calculation when /hour or /45mins
+    if (assignmentDurationType.includes("hour")) {
+      assignmentFeesPerLesson =
+        assignmentFrequency *
+        assignmentDuration.replace(/[^0-9.]/g, "").trim() *
+        rate;
+    } else if (assignmentDurationType.includes("mins")) {
+      assignmentFeesPerLesson = assignmentFrequency * rate;
+    } else {
+      assignmentFeesPerLesson = "";
+    }
+
+    totalCommissionFees = assignmentFeesPerLesson * commission;
 
     let confirmationMessage = "";
     confirmationMessage = `Confirmed Lesson Details are as follows:\n\nDate & Time: ${firstLesson}\nTutor Name: ${tutorName}\nFrequency & duration of lessons: ${assignmentFrequencyDuration}\nRate: $${rate}/${assignmentDurationType}\nFee for 1 lesson: $${assignmentFeesPerLesson}/lesson\n\nAn invoice, which will include both contact and payment details, will be issued to you within the next 1-2 days.\n\nShould you find it necessary to discontinue the lessons earlier than the quantity specified on the invoice, please note that you are only obliged to pay for the lessons that have been provided up to that point. Payment is requested upon the completion of the lessons. Please remit payments for subsequent lessons directly to the tutor only after settling the invoice amount with our company.\n\nRest assured, there are no hidden or additional fees. Your financial obligation is limited to the cost of the lessons delivered and any expenses for materials procured by the tutor, should they arise.\n\nWe thank you for your engagement and are here to support a seamless educational experience.`;
@@ -159,6 +178,7 @@ const Homepage = () => {
               value={formData.case_code}
               onChange={handleInputChange}
               placeholder="BDYJS311"
+              required
             />
           </div>
           <div className="client_name">
@@ -170,6 +190,7 @@ const Homepage = () => {
               value={formData.client_name}
               onChange={handleInputChange}
               placeholder="Mr James"
+              required
             />
           </div>
           <div className="client_contact">
@@ -181,10 +202,11 @@ const Homepage = () => {
               value={formData.client_contact}
               onChange={handleInputChange}
               placeholder="91234567"
+              required
             />
           </div>
           <div className="tutor_name">
-            <label htmlFor="tutor_name">Tutor Name</label>
+            <label htmlFor="tutor_name">Tutor Name*</label>
             <input
               type="text"
               id="tutor_name"
@@ -192,10 +214,11 @@ const Homepage = () => {
               value={formData.tutor_name}
               onChange={handleInputChange}
               placeholder="Bob"
+              required
             />
           </div>
           <div className="tutor_contact">
-            <label htmlFor="tutor_contact">Tutor Contact</label>
+            <label htmlFor="tutor_contact">Tutor Contact*</label>
             <input
               type="text"
               id="tutor_contact"
@@ -203,11 +226,12 @@ const Homepage = () => {
               value={formData.tutor_contact}
               onChange={handleInputChange}
               placeholder="91234567"
+              required
             />
           </div>
           <div className="first_lesson_data_time">
             <label htmlFor="first_lesson_data_time">
-              First Lesson Date & Time
+              First Lesson Date & Time*
             </label>
             <input
               type="text"
@@ -216,10 +240,11 @@ const Homepage = () => {
               value={formData.first_lesson_data_time}
               onChange={handleInputChange}
               placeholder="Friday, 8th March, 7.15pm"
+              required
             />
           </div>
           <div className="rate">
-            <label htmlFor="rate">Rate</label>
+            <label htmlFor="rate">Rate*</label>
             <input
               type="text"
               id="rate"
@@ -227,11 +252,12 @@ const Homepage = () => {
               value={formData.rate}
               onChange={handleInputChange}
               placeholder="$50/hour, $75/lesson"
+              required
             />
           </div>
           <div className="frequency-duration">
             <label htmlFor="frequencyDuration">
-              Frequency & Duration (Optional)
+              Frequency & Duration (Optional) "2 x 1.5hours/week"
             </label>
             <input
               type="text"
@@ -243,7 +269,7 @@ const Homepage = () => {
             />
           </div>
           <div className="commission">
-            <label htmlFor="commission">Commission (Optional)</label>
+            <label htmlFor="commission">Commission (Optional) "2"</label>
             <input
               type="text"
               id="commission"
@@ -277,8 +303,21 @@ const Homepage = () => {
             cols="70"
             rows="30"
             value={textOutput1}
-            onChange={(e) => setTextOutput1(e.target.value)}
+            onChange={(e) => {
+              setIsCopy1(true);
+              setTextOutput1(e.target.value);
+            }}
           ></textarea>
+          <button
+            className="clipboard"
+            onClick={() => {
+              setIsCopy1(true);
+              copyToClipboard(textOutput1);
+            }}
+          >
+            Copy to Clipboard
+          </button>
+          {isCopy1 && <span>Copied</span>}
         </div>
 
         <div className="convert-output-title-2">
@@ -291,6 +330,16 @@ const Homepage = () => {
             value={textOutput2}
             onChange={(e) => setTextOutput2(e.target.value)}
           ></textarea>
+          <button
+            className="clipboard"
+            onClick={() => {
+              setIsCopy2(true);
+              copyToClipboard(textOutput2);
+            }}
+          >
+            Copy to Clipboard
+          </button>
+          {isCopy2 && <span>Copied</span>}
         </div>
       </div>
     </div>
