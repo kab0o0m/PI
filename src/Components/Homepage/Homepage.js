@@ -79,9 +79,11 @@ const Homepage = () => {
     setIsCopy2(false);
 
     const caseCode = formData["case_code"].trim();
-    const clientName = formData["client_name"].trim();
+    let clientName = formData["client_name"].trim();
+    clientName = clientName.charAt(0).toUpperCase() + clientName.slice(1);
     const clientContact = formData["client_contact"].trim();
-    const tutorName = formData["tutor_name"].trim();
+    let tutorName = formData["tutor_name"].trim();
+    tutorName = tutorName.charAt(0).toUpperCase() + tutorName.slice(1);
     const tutorContact = formData["tutor_contact"].trim();
     const firstLesson = formData["first_lesson_data_time"].trim();
     const rate = formData["rate"].trim();
