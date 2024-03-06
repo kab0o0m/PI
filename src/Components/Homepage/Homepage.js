@@ -274,18 +274,18 @@ const Homepage = () => {
               name="frequencyDuration"
               value={formData.frequencyDuration}
               onChange={handleInputChange}
-              placeholder="2"
+              placeholder="2 x 1.5hours/week"
             />
           </div>
           <div className="commission">
-            <label htmlFor="commission">Commission by lesson (Optional)</label>
+            <label htmlFor="commission">No. of lessons (Optional)</label>
             <input
               type="text"
               id="commission"
               name="commission"
               value={formData.commission}
               onChange={handleInputChange}
-              placeholder="2"
+              placeholder="3"
             />
           </div>
           <div className="commission-per-hour">
@@ -298,7 +298,7 @@ const Homepage = () => {
               name="commissionPerHour"
               value={formData.commissionPerHour}
               onChange={handleInputChange}
-              placeholder="2"
+              placeholder="2.5"
             />
           </div>
           <div className="button">
