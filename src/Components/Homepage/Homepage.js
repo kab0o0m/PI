@@ -278,7 +278,9 @@ const Homepage = () => {
             />
           </div>
           <div className="commission">
-            <label htmlFor="commission">No. of lessons (Optional)</label>
+            <label htmlFor="commission">
+              Number of Lessons of Commission (Optional)
+            </label>
             <input
               type="text"
               id="commission"
@@ -290,7 +292,8 @@ const Homepage = () => {
           </div>
           <div className="commission-per-hour">
             <label htmlFor="commissionPerHour">
-              Commission per hour (Optional)
+              Commission based on number of hours (OPTIONAL: Fill in ONLY if
+              first lesson is different duration)
             </label>
             <input
               type="text"
