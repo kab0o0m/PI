@@ -1,0 +1,122 @@
+body {
+  font-family: 'Times New Roman', Times, serif;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  width: 50%;
+  justify-content: center;
+  margin: auto;
+  margin-top: 5rem;
+}
+
+form input[type='text'] {
+  width: 15rem;
+  padding: 0.5rem;
+}
+
+.case_code,
+.client_name,
+.client_contact,
+.tutor_name,
+.tutor_contact,
+.first_lesson_data_time,
+.frequency-duration,
+.rate,
+.commission,
+.commission-per-hour {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.button {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+}
+
+.convert-output {
+  display: flex;
+  justify-content: space-evenly;
+  margin: 0 0 2rem 0;
+}
+
+.convert-output textarea{
+  padding: 0.5rem;
+}
+
+.convert-output-title,
+.convert-output-title-2 {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+#submit {
+  border: none;
+  background-color: transparent;
+  cursor: pointer;
+  cursor: pointer;
+  margin: 0;
+  width: 8rem;
+  padding: 0.7rem 0 0.7rem 0;
+  border-radius: 3px;
+  background-color: #3B81F6;
+  color: #FFF;
+  font-weight: bold;
+}
+
+#clear {
+  width: 8rem;
+  cursor: pointer;
+  background-color: #6B7280;
+  border-radius: 3px;
+  border: 0;
+  color: #FFF;
+  font-weight: bold;
+}
+
+.commission-per-hour label{
+  width: 25rem; 
+}
+
+.loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent black overlay */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999; /* Ensure the loader is on top of other content */
+}
+
+/* Styling for the loader container */
+.loader-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.clipboard {
+  width: 12rem;
+  cursor: pointer;
+  background-color: #6B7280;
+  border-radius: 3px;
+  border: 0;
+  color: #FFF;
+  font-weight: bold;
+  padding: 0.5rem 1rem;
+}
+
+.copy {
+  display: flex;
+  gap: 2rem;
+  align-items: center;
+}
