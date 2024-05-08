@@ -71,7 +71,7 @@ const Homepage = () => {
       throw new Error("No assignment found with the specified code.");
     } catch (error) {
       if (error.response && error.response.status === 429) {
-        alert("Network error!");
+        alert("Network error! Try again in awhile..");
         return;
       } else {
         console.log(error);
