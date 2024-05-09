@@ -110,6 +110,20 @@ const Homepage = () => {
     let assignmentFeesPerLesson = "";
     let totalCommissionFees = "";
 
+    // Check if contact numbers are valid
+    if (isNaN(Number(clientContact)) && clientContact.length !== 8) {
+      setErrorPopup("Client contact number is not 8 digits")
+    } else if (isNaN(Number(tutorContact)) && tutorContact.length !== 8 ) {
+      setErrorPopup("Tutor contact number is not 8 digits")
+    } 
+
+    //Check if rate is numbers
+    if (isNaN(Number(rate))) {
+      alert("Rate is not valid, numbers only");
+      setIsLoading(false);
+      return;
+    }
+
     //Fetch assignment using assignment code from backend
     const assignment = await fetchCase(caseCode);
 
@@ -130,12 +144,7 @@ const Homepage = () => {
       return;
     }
 
-    // Check if contact numbers are valid
-    if (isNaN(Number(clientContact)) && clientContact.length !== 8) {
-      setErrorPopup("Client contact number is not 8 digits")
-    } else if (isNaN(Number(tutorContact)) && tutorContact.length !== 8 ) {
-      setErrorPopup("Tutor contact number is not 8 digits")
-    } 
+
 
     // Handle frequency, duration and duration type
     if (frequencyDuration) {
