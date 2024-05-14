@@ -2,6 +2,7 @@ import { useState } from "react";
 import "./Homepage.css";
 import axios from "axios";
 import { DotLoader } from "react-spinners";
+import Swal from 'sweetalert2'
 
 const Homepage = () => {
   const initialFormData = {
@@ -23,7 +24,7 @@ const Homepage = () => {
   const [Copy1, setCopy1] = useState("Copy to clipboard");
   const [Copy2, setCopy2] = useState("Copy to clipboard");
   const [isLoading, setIsLoading] = useState(false);
-  const [errorPopup, setErrorPopup] = useState("");
+
 
   const copyToClipboard = async (text) => {
     try {
@@ -70,9 +71,14 @@ const Homepage = () => {
       // If no assignment is found matching the caseCode
       throw new Error("No assignment found with the specified code.");
     } catch (error) {
-      if (error.response && error.response.status === 429) {
-        alert("Network error! Try again in awhile..");
-        return;
+      console.log(error)
+      if (error.message === "Network Error") {
+        Swal.fire({
+          title: "The Internet?",
+          text: "Network error! Please check your internet connection!",
+          icon: "question"
+        });
+        return error.message;
       } else {
         console.log(error);
         setIsLoading(false);
@@ -110,16 +116,24 @@ const Homepage = () => {
     let assignmentFeesPerLesson = "";
     let totalCommissionFees = "";
 
-    // Check if contact numbers are valid
-    if (isNaN(Number(clientContact)) && clientContact.length !== 8) {
-      setErrorPopup("Client contact number is not 8 digits")
-    } else if (isNaN(Number(tutorContact)) && tutorContact.length !== 8 ) {
-      setErrorPopup("Tutor contact number is not 8 digits")
-    } 
-
+    if (caseCode.length < 7) {
+      Swal.fire({
+        title: 'Case Code',
+        text: 'Invalid case code!',
+        icon: 'error',
+        confirmButtonText: 'Cool'
+      });
+      setIsLoading(false);
+      return;
+    }
     //Check if rate is numbers
     if (isNaN(Number(rate))) {
-      alert("Rate is not valid, numbers only");
+      Swal.fire({
+        title: 'Rate',
+        text: 'Rate is not valid, numbers only!',
+        icon: 'error',
+        confirmButtonText: 'Cool'
+      });
       setIsLoading(false);
       return;
     }
@@ -128,6 +142,15 @@ const Homepage = () => {
     const assignment = await fetchCase(caseCode);
 
     if (assignment) {
+      if (assignment === "Network Error") {
+        Swal.fire({
+          title: "The Internet?",
+          text: "Network error! Please check your internet connection!",
+          icon: "question"
+        });
+        setIsLoading(false);
+        return;
+      }
       assignmentContent = assignment.content;
       assignmentLevel = assignmentContent
         .split("\n")[0]
@@ -137,7 +160,12 @@ const Homepage = () => {
       assignmentLocation = assignment.location;
       
     } else {
-      alert("No assignment found!")
+      Swal.fire({
+        title: 'Case Code',
+        text: 'No Assignments found!',
+        icon: 'error',
+        confirmButtonText: 'Cool'
+      });
       setIsLoading(false);
       setTextOutput1("");
       setTextOutput2("");
