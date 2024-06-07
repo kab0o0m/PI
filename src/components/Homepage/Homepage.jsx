@@ -24,8 +24,30 @@ const Homepage = () => {
   const [Copy1, setCopy1] = useState("Copy to clipboard");
   const [Copy2, setCopy2] = useState("Copy to clipboard");
   const [isLoading, setIsLoading] = useState(false);
+  let origin = import.meta.env.VITE_TEST_IFRAME_ORIGIN.replace(/"/g, '');
 
-
+  useEffect(() => {
+    window.addEventListener("message", (event) => {
+      console.log(event.origin)
+      // Verify the origin of the message for security
+      if (event.origin !== origin) {
+        console.warn("Received message from unknown origin:", event.origin);
+        return;
+      }
+      // Handle the received message
+      if(event.data.type == "AUTO_FILLED_DATA"){
+        setFormData({
+          ...initialFormData,
+          case_code: event.data.tutorAutoFilledDetails.caseCode || "",
+          client_contact: event.data.tutorAutoFilledDetails.clientContact || "",
+          client_name: event.data.tutorAutoFilledDetails.clientName || "",
+          tutor_contact: event.data.tutorAutoFilledDetails.tutorContact || "",
+          tutor_name: event.data.tutorAutoFilledDetails.tutorName || "",
+        });
+        console.log("Received message from parent window:", event.data);
+      }
+    });
+  }, []);
   const copyToClipboard = async (text) => {
     try {
       await navigator.clipboard.writeText(text);
@@ -232,7 +254,14 @@ const Homepage = () => {
     }
     invoiceMessage = `${caseCode} ${tutorContact}\n\n${assignmentLevel}\n\nTutor Name: ${tutorName} (HP: ${tutorContact})\nClient Name: ${clientName} (HP: ${clientContact})\n\nTuition Location: ${assignmentLocation}\nFirst Lesson: ${firstLesson}\nRate: $${rate}/${assignmentDurationType}\nIf there are no issues, lessons will be ${assignmentFrequencyDuration}. The rate will be $${rate}/${assignmentDurationType}, $${assignmentFeesPerLesson}/lesson.\n\nCommission: Fees for the first ${commission} lessons ${additionalMessage}will be collected by our Company, amounting $${totalCommissionFees}`;
     setTextOutput2(invoiceMessage);
-
+  window.top.postMessage(
+      {
+        type: "TUTOR_INVOICE",
+        ConfirmationTemplate: invoiceMessage,
+        InvoiceTemplate: confirmationMessage,
+      },
+      origin
+    );
     setIsLoading(false);
     window.scrollTo({
       top: document.documentElement.scrollHeight,
