@@ -75,6 +75,8 @@ const Homepage = () => {
       if (!assignment) {
         throw new Error("No assignment found with the specified code.");
       }
+
+      return assignment;
   
     } catch (error) {
       console.log(error)
