@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import "./Homepage.css";
 import axios from "axios";
 import { DotLoader } from "react-spinners";
