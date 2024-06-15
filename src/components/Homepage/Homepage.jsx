@@ -24,7 +24,7 @@ const Homepage = () => {
   const [Copy1, setCopy1] = useState("Copy to clipboard");
   const [Copy2, setCopy2] = useState("Copy to clipboard");
   const [isLoading, setIsLoading] = useState(false);
-  let origin = import.meta.env.VITE_TEST_IFRAME_ORIGIN
+  let origin = import.meta.env.VITE_TEST_IFRAME_ORIGIN;
 
   useEffect(() => {
     window.addEventListener("message", (event) => {
@@ -244,7 +244,7 @@ const Homepage = () => {
         ConfirmationTemplate: invoiceMessage,
         InvoiceTemplate: confirmationMessage,
       },
-      origin
+      '*'
     );
     setIsLoading(false);
     window.scrollTo({
