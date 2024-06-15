@@ -30,10 +30,10 @@ const Homepage = () => {
     window.addEventListener("message", (event) => {
       console.log(event.origin)
       // Verify the origin of the message for security
-      if (event.origin !== origin) {
-        console.warn("Received message from unknown origin:", event.origin);
-        return;
-      }
+      // if (event.origin !== origin) {
+      //   console.warn("Received message from unknown origin:", event.origin);
+      //   return;
+      // }
       // Handle the received message
       if(event.data.type == "AUTO_FILLED_DATA"){
         setFormData({
