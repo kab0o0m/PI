@@ -24,7 +24,7 @@ const Homepage = () => {
   const [Copy1, setCopy1] = useState("Copy to clipboard");
   const [Copy2, setCopy2] = useState("Copy to clipboard");
   const [isLoading, setIsLoading] = useState(false);
-  let origin = import.meta.env.VITE_TEST_IFRAME_ORIGIN.replace(/"/g, '');
+  let origin = import.meta.env.VITE_TEST_IFRAME_ORIGIN
 
   useEffect(() => {
     window.addEventListener("message", (event) => {
