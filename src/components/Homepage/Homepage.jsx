@@ -67,31 +67,15 @@ const Homepage = () => {
 
   const fetchCase = async (caseCode) => {
     try {
-      let pageNo = 0;
-      let hasMorePages = true;
-  
-      while (hasMorePages) {
-        const url = `https://admin.premiumtutors.sg/api/assignments?pageNo=${pageNo}&showAll=yes&pageSize=100`;
-        const response = await axios.get(url);
-        const assignments = response.data.data;
-  
-        // Check if there are more pages by examining the response data
-        if (assignments.length < 1) {
-          hasMorePages = false;
-        }
-  
-        for (const assignment of assignments) {
-          if (caseCode === assignment.code) {
-            console.log(assignment)
-            return assignment; // Found the assignment, return it
-          }
-        }
-  
-        pageNo++; // Move to the next page
+      const url = `https://admin.premiumtutors.sg/api/assignment/${caseCode}`;
+      const response = await axios.get(url);
+      const assignment = response.data.data;
+      
+      // If no assignment is found matching the caseCode
+      if (!assignment) {
+        throw new Error("No assignment found with the specified code.");
       }
   
-      // If no assignment is found matching the caseCode
-      throw new Error("No assignment found with the specified code.");
     } catch (error) {
       console.log(error)
       if (error.message === "Network Error") {
