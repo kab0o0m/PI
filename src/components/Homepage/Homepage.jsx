@@ -245,6 +245,7 @@ const Homepage = () => {
         type: "TUTOR_INVOICE",
         ConfirmationTemplate: invoiceMessage,
         InvoiceTemplate: confirmationMessage,
+        firsLessonDate: firstLesson,
       },
       '*'
     );
@@ -331,7 +332,7 @@ const Homepage = () => {
               First Lesson Date & Time*
             </label>
             <input
-              type="text"
+              type="date"
               id="first_lesson_data_time"
               name="first_lesson_data_time"
               value={formData.first_lesson_data_time}

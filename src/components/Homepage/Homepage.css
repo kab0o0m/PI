@@ -12,7 +12,8 @@ form {
   margin-top: 5rem;
 }
 
-form input[type='text'] {
+form input[type="text"],
+form input[type="date"] {
   width: 15rem;
   padding: 0.5rem;
 }
