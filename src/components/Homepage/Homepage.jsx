@@ -67,8 +67,11 @@ const Homepage = () => {
 
   const fetchCase = async (caseCode) => {
     try {
-      const url = `https://admin.premiumtutors.sg/api/assignment/${caseCode}`;
-      const response = await axios.get(url);
+      const url = "https://admin.premiumtutors.sg/api/assignment";
+      const postData = {
+        code: caseCode
+      };
+      const response = await axios.post(url, postData);
       const assignment = response.data.data;
       
       // If no assignment is found matching the caseCode
