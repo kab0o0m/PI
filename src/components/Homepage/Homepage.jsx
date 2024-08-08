@@ -3,6 +3,7 @@ import "./Homepage.css";
 import axios from "axios";
 import { DotLoader } from "react-spinners";
 import Swal from 'sweetalert2'
+import moment from "moment";
 
 const Homepage = () => {
   const initialFormData = {
@@ -111,7 +112,8 @@ const Homepage = () => {
     let tutorName = formData["tutor_name"].trim();
     tutorName = tutorName.charAt(0).toUpperCase() + tutorName.slice(1);
     const tutorContact = formData["tutor_contact"].trim();
-    const firstLesson = formData["first_lesson_data_time"].trim();
+    const firstLessonDate = formData["first_lesson_data_time"].trim();
+    const firstLesson = moment(firstLessonDate).format('dddd DD MMMM YYYY');
     const rate = formData["rate"].trim();
     let frequencyDuration = formData["frequencyDuration"].trim();
     let commission = formData["commission"].trim();
@@ -248,7 +250,7 @@ const Homepage = () => {
         type: "TUTOR_INVOICE",
         ConfirmationTemplate: invoiceMessage,
         InvoiceTemplate: confirmationMessage,
-        firsLessonDate: firstLesson,
+        firsLessonDate: firstLessonDate,
       },
       '*'
     );
