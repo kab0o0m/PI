@@ -113,7 +113,7 @@ const Homepage = () => {
     tutorName = tutorName.charAt(0).toUpperCase() + tutorName.slice(1);
     const tutorContact = formData["tutor_contact"].trim();
     const firstLessonDate = formData["first_lesson_data_time"].trim();
-    const firstLesson = moment(firstLessonDate).format('dddd DD MMMM YYYY');
+    const firstLesson = moment(firstLessonDate).format('dddd DD MMMM YYYY hh:mm a');
     const rate = formData["rate"].trim();
     let frequencyDuration = formData["frequencyDuration"].trim();
     let commission = formData["commission"].trim();
@@ -337,7 +337,7 @@ const Homepage = () => {
               First Lesson Date & Time*
             </label>
             <input
-              type="date"
+              type="datetime-local"
               id="first_lesson_data_time"
               name="first_lesson_data_time"
               value={formData.first_lesson_data_time}
