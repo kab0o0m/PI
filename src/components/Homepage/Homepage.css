@@ -13,7 +13,7 @@ form {
 }
 
 form input[type="text"],
-form input[type="date"] {
+form input[type="datetime-local"] {
   width: 15rem;
   padding: 0.5rem;
 }
