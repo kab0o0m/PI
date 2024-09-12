@@ -203,6 +203,7 @@ const Homepage = () => {
     } else if (assignmentDuration.includes("mins")) {
       assignmentDurationType = assignmentDuration.match(/\d+mins/)[0];
     }
+    
 
 
 
